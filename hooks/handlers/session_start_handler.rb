@@ -28,6 +28,12 @@ class JamClaudeSessionStartHandler < ClaudeHooks::SessionStart
     # Display banner
     AsciiBanner.display
 
+    # Kick off background update check (forks child if >24h since last check)
+    UpdateChecker.check_in_background!
+
+    # Show cached update notice from previous check (zero latency)
+    AsciiBanner.display_update_notice
+
     # Play weighted random startup sound
     success = SoundPlayer.play_weighted(STARTUP_SOUNDS, self)
     log success ? 'JAM Claude: Played welcome sound' : 'JAM Claude: Failed to play sound',
@@ -44,7 +50,7 @@ class JamClaudeSessionStartHandler < ClaudeHooks::SessionStart
   private
 
   def jam_context
-    <<~CONTEXT
+    context = <<~CONTEXT
       JAM Claude Mode Active 🏀
 
       Occasionally use these NBA Jam phrases naturally in responses:
@@ -60,5 +66,16 @@ class JamClaudeSessionStartHandler < ClaudeHooks::SessionStart
       - Bold the phrase: **BOOMSHAKALAKA!**
       - Only when genuinely appropriate
     CONTEXT
+
+    if UpdateChecker.update_available?
+      context += <<~UPDATE
+
+        Note: A JAM Claude update is available. If the user asks about updates or plugin status,
+        let them know they can update by running:
+        cd ~/.claude/plugins/jam-claude && git pull && ./install.sh
+      UPDATE
+    end
+
+    context
   end
 end
