@@ -47,10 +47,13 @@ JAM mode is enabled by default. Use `/jam off` to disable.
 
 ### Toggle JAM Mode
 
-```bash
+Type these in the Claude Code chat:
+
+```
 /jam on      # Enable JAM Claude
 /jam off     # Disable JAM Claude
 /jam         # Show current status
+/jam demo    # Play all sounds tour
 ```
 
 ### During Sessions
