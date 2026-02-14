@@ -4,6 +4,16 @@
 
 Bring the legendary energy of NBA Jam to your coding sessions. Every command becomes a basketball game with classic commentator sounds, on-fire streaks, and boomshakalaka moments.
 
+## Demo
+
+<!-- To add the demo video:
+     1. Record: bash demo/record-demo.sh (while screen recording with audio)
+     2. Upload the MP4 to a GitHub issue comment (drag-drop), copy the generated URL
+     3. Cancel the issue, paste the URL below on its own line
+     4. GitHub auto-renders MP4 URLs as inline video players -->
+
+https://github.com/Bad-Listener/jam-claude/assets/PLACEHOLDER/demo.mp4
+
 ## Features
 
 🔊 **NBA Jam Sound Effects**
@@ -76,18 +86,12 @@ export CLAUDE_DISABLE_SOUNDS=1  # Force disable all sounds
 
 ## Sounds Included
 
-90+ NBA Jam audio clips including:
-- Welcome to NBA Jam
-- He's on Fire
-- Heating Up
-- From Downtown
-- Monster Jam
-- Boomshakalaka
-- Razzle Dazzle
-- Kaboom
-- Rejected
-- Wins The Game
-- And many more!
+22 curated NBA Jam audio clips:
+- **Startup:** Welcome to NBA Jam, Hello, Tonight's Matchup
+- **Success:** It's Good, From Downtown, Monster Jam, Kaboom, Scores, Slams It, Razzle Dazzle, Show Time, Hooks It In, Woah, Yes
+- **Streak:** Heating Up (streak 2), He's on Fire (streak 3+)
+- **Notifications:** Whistle, Buzzer, Horn
+- **Game Over:** Wins The Game, At the Buzzer, Overtime
 
 ## How It Works
 
