@@ -17,9 +17,14 @@ module AsciiBanner
   class << self
     # Display the JAM Claude banner
     def display
-      $stderr.puts NBA_JAM_LOGO
-      $stderr.puts "   🏀 BOOMSHAKALAKA! JAM MODE ACTIVATED 🏀"
-      $stderr.puts
+      # Write directly to terminal, bypassing stdout (JSON) and stderr (errors)
+      File.open('/dev/tty', 'w') do |tty|
+        tty.puts NBA_JAM_LOGO
+        tty.puts "   🏀 BOOMSHAKALAKA! JAM MODE ACTIVATED 🏀"
+        tty.puts
+      end
+    rescue Errno::ENODEV, Errno::ENOENT
+      # No terminal available (e.g., running in background)
     end
   end
 end
