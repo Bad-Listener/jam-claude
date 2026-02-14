@@ -3,6 +3,7 @@
 require_relative '../lib/sound_player'
 require_relative '../lib/streak_tracker'
 require_relative '../lib/session_stats'
+require_relative '../lib/error_state'
 require_relative '../../lib/jam_config'
 
 # JAM Claude Stop Handler
@@ -39,7 +40,15 @@ class JamClaudeStopHandler < ClaudeHooks::Stop
   def call
     log 'JAM Claude: Response completed'
 
-    # Increment streak (assuming success)
+    # Check if error occurred in this turn - skip success sound if so
+    if ErrorState.error_and_clear?
+      log 'JAM Claude: Skipping success sound due to error in this turn'
+      allow_continue!
+      suppress_output!
+      return output_data
+    end
+
+    # Increment streak (only if no error)
     current_streak = StreakTracker.increment
     SessionStats.update_peak_streak(current_streak) if JamConfig.jam?
     log "JAM Claude: Current streak: #{current_streak}"
