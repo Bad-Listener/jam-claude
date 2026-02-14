@@ -2,6 +2,8 @@
 
 require_relative '../lib/sound_player'
 require_relative '../lib/streak_tracker'
+require_relative '../lib/session_stats'
+require_relative '../../lib/jam_config'
 
 # JAM Claude Stop Handler
 #
@@ -39,6 +41,7 @@ class JamClaudeStopHandler < ClaudeHooks::Stop
 
     # Increment streak (assuming success)
     current_streak = StreakTracker.increment
+    SessionStats.update_peak_streak(current_streak) if JamConfig.jam?
     log "JAM Claude: Current streak: #{current_streak}"
 
     # Determine sound weights based on streak

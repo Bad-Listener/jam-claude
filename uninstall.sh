@@ -70,6 +70,7 @@ info "Marketplace directory removed"
 step "Removing config files..."
 rm -f "$HOME/.config/claude/sounds.conf"
 rm -f "$HOME/.config/claude/jam-streak.json"
+rm -f "$HOME/.config/claude/jam-stats.json"
 info "Config files removed"
 
 echo ""
