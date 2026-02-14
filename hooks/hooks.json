@@ -33,6 +33,16 @@
         ]
       }
     ],
+    "PostToolUse": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "${CLAUDE_PLUGIN_ROOT}/hooks/entrypoints/post_tool_use.rb"
+          }
+        ]
+      }
+    ],
     "SessionEnd": [
       {
         "hooks": [

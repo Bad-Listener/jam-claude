@@ -2,7 +2,7 @@
 
 require_relative '../lib/sound_player'
 require_relative '../lib/ascii_banner'
-require_relative '../lib/update_checker'
+require_relative '../lib/session_stats'
 
 # JAM Claude SessionStart Handler
 #
@@ -21,6 +21,9 @@ class JamClaudeSessionStartHandler < ClaudeHooks::SessionStart
   def call
     source_type = source || 'unknown'
     log "JAM Claude: Session starting (#{source_type})"
+
+    # Reset stats for new session
+    SessionStats.reset
 
     # Display banner
     AsciiBanner.display
