@@ -45,6 +45,11 @@ check_prereqs() {
 
   if [[ "$(uname)" == "Darwin" ]]; then
     command -v afplay >/dev/null 2>&1 || warn "afplay not found — sounds won't play on macOS"
+  elif [[ "$(uname)" == "Linux" ]]; then
+    if ! command -v aplay >/dev/null 2>&1 && ! command -v paplay >/dev/null 2>&1 && ! command -v ffplay >/dev/null 2>&1; then
+      warn "No audio player found (aplay, paplay, or ffplay) — sounds won't play on Linux"
+      warn "Install one: sudo apt-get install alsa-utils (Debian/Ubuntu)"
+    fi
   fi
 
   [ -d "$CLAUDE_DIR" ] || error "Claude Code not found (~/.claude missing). Install Claude Code first."
@@ -180,19 +185,15 @@ setup_cache() {
 
   mkdir -p "$CACHE_DIR"
 
-  # Copy all plugin files to cache
-  rsync -a --delete \
-    --exclude='.git' \
-    --exclude='install.sh' \
-    --exclude='uninstall.sh' \
-    "$SOURCE_DIR/" "$CACHE_DIR/"
+  # Copy all plugin files to cache (using cp instead of rsync for portability)
+  rm -rf "${CACHE_DIR:?}/"*
+  cp -a "$SOURCE_DIR/." "$CACHE_DIR/"
+  rm -rf "$CACHE_DIR/.git" "$CACHE_DIR/install.sh" "$CACHE_DIR/uninstall.sh"
 
   # Also copy to marketplace source directory
-  rsync -a --delete \
-    --exclude='.git' \
-    --exclude='install.sh' \
-    --exclude='uninstall.sh' \
-    "$SOURCE_DIR/" "$MARKETPLACE_DIR/jam-claude-plugin/"
+  rm -rf "${MARKETPLACE_DIR:?}/jam-claude-plugin/"*
+  cp -a "$SOURCE_DIR/." "$MARKETPLACE_DIR/jam-claude-plugin/"
+  rm -rf "$MARKETPLACE_DIR/jam-claude-plugin/.git" "$MARKETPLACE_DIR/jam-claude-plugin/install.sh" "$MARKETPLACE_DIR/jam-claude-plugin/uninstall.sh"
 
   # Ensure entrypoints are executable
   chmod +x "$CACHE_DIR/hooks/entrypoints/"*.rb

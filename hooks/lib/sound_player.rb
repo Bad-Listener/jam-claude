@@ -102,7 +102,8 @@ module SoundPlayer
       when :macos
         "afplay -v 0.3 #{escaped_path}"
       when :windows
-        "(New-Object Media.SoundPlayer '#{sound_path}').PlaySync()"
+        win_path = sound_path.gsub("'", "''")
+        "powershell -NoProfile -Command \"(New-Object System.Media.SoundPlayer '#{win_path}').PlaySync()\""
       when :linux
         "aplay -q #{escaped_path} || paplay #{escaped_path} || ffplay -nodisp -autoexit #{escaped_path}"
       else
@@ -115,7 +116,8 @@ module SoundPlayer
     # @param logger [Object] optional logger
     # @return [Boolean] true if command executed successfully
     def execute_command(command, logger)
-      pid = spawn(command, [:out, :err] => '/dev/null')
+      null_device = detect_platform == :windows ? 'NUL' : '/dev/null'
+      pid = spawn(command, [:out, :err] => null_device)
       Process.detach(pid)
       true
     rescue StandardError => e
