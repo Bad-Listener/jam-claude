@@ -2,6 +2,7 @@
 
 require 'rbconfig'
 require 'json'
+require_relative 'nba_facts'
 
 # AsciiBanner - Display NBA JAM logo and activation message
 
@@ -27,6 +28,9 @@ module AsciiBanner
         tty.puts "   🏀 BOOMSHAKALAKA! JAM MODE ACTIVATED 🏀"
         version = plugin_version
         tty.puts "                    v#{version}" if version
+        tty.puts
+        result = NbaFacts.random_with_category
+        tty.puts "   #{result[:emoji]} #{result[:fact]}"
         tty.puts
       end
     rescue Errno::ENODEV, Errno::ENOENT, Errno::ENXIO, Errno::EACCES
