@@ -7,11 +7,12 @@ require 'time'
 # SessionStats - Track coding session statistics as basketball stats
 #
 # State file: ~/.config/claude/jam-stats.json
-# Tracks: points, assists, rebounds, dunks, steals, blocks, peak_streak, was_on_fire
+# Tracks: points, assists, rebounds, dunks, steals, blocks, turnovers, peak_streak, was_on_fire
 #
 # Usage:
 #   SessionStats.record(tool_name)
 #   SessionStats.increment_blocks
+#   SessionStats.increment_turnovers
 #   SessionStats.update_peak_streak(streak)
 #   SessionStats.stats
 #   SessionStats.reset
@@ -47,6 +48,14 @@ class SessionStats
     def increment_blocks
       state = load_state
       state['blocks'] += 1
+      state['last_updated'] = Time.now.iso8601
+      save_state(state)
+    end
+
+    # Increment turnovers (errors/failures)
+    def increment_turnovers
+      state = load_state
+      state['turnovers'] += 1
       state['last_updated'] = Time.now.iso8601
       save_state(state)
     end
@@ -103,6 +112,7 @@ class SessionStats
         'dunks' => 0,
         'steals' => 0,
         'blocks' => 0,
+        'turnovers' => 0,
         'peak_streak' => 0,
         'was_on_fire' => false,
         'last_updated' => Time.now.iso8601
