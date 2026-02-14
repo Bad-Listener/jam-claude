@@ -1,0 +1,11 @@
+{
+  "name": "jam-claude",
+  "version": "1.0.0",
+  "description": "NBA Jam sound effects and commentary for Claude Code",
+  "author": {
+    "name": "Andreas Giannopoulos"
+  },
+  "homepage": "https://github.com/Bad-Listener/jam-claude",
+  "repository": "https://github.com/Bad-Listener/jam-claude",
+  "license": "MIT"
+}
