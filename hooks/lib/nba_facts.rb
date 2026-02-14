@@ -224,7 +224,7 @@ module NbaFacts
     def random_with_category
       category = FACTS_BY_CATEGORY.keys.sample
       fact = FACTS_BY_CATEGORY[category].sample
-      { emoji: CATEGORY_EMOJIS[category], fact: fact }
+      { emoji: CATEGORY_EMOJIS[category], fact: fact, category: category }
     end
   end
 end

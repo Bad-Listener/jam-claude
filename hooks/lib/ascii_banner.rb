@@ -3,6 +3,7 @@
 require 'rbconfig'
 require 'json'
 require_relative 'nba_facts'
+require_relative 'fact_presenter'
 
 # AsciiBanner - Display NBA JAM logo and activation message
 
@@ -30,7 +31,7 @@ module AsciiBanner
         tty.puts "                    v#{version}" if version
         tty.puts
         result = NbaFacts.random_with_category
-        tty.puts "   #{result[:emoji]} #{result[:fact]}"
+        tty.puts FactPresenter.format(result)
         tty.puts
       end
     rescue Errno::ENODEV, Errno::ENOENT, Errno::ENXIO, Errno::EACCES
