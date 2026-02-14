@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require 'rbconfig'
+require_relative 'nba_facts'
 
 # AsciiBanner - Display NBA JAM logo and activation message
 
@@ -24,6 +25,9 @@ module AsciiBanner
       File.open(tty_path, 'w') do |tty|
         tty.puts NBA_JAM_LOGO
         tty.puts "   🏀 BOOMSHAKALAKA! JAM MODE ACTIVATED 🏀"
+        tty.puts
+        result = NbaFacts.random_with_category
+        tty.puts "   #{result[:emoji]} #{result[:fact]}"
         tty.puts
       end
     rescue Errno::ENODEV, Errno::ENOENT, Errno::ENXIO, Errno::EACCES
