@@ -87,7 +87,7 @@ module SoundPlayer
     # @param sound_file [String] the sound file name
     # @return [String] absolute path to sound file
     def resolve_sound_path(sound_file)
-      plugin_root = ENV['CLAUDE_PLUGIN_ROOT'] || File.expand_path('../../..', __dir__)
+      plugin_root = ENV['CLAUDE_PLUGIN_ROOT'] || File.expand_path('../..', __dir__)
       File.join(plugin_root, 'vendor', 'sounds', sound_file)
     end
 
