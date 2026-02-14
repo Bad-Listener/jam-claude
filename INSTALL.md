@@ -1,83 +1,41 @@
 # JAM Claude Installation Guide
 
-Detailed installation instructions for JAM Claude plugin.
-
 ## Prerequisites
 
 - Claude Code installed and working
 - macOS, Linux, or Windows
-- Git (for manual installation)
+- Ruby (included with macOS)
+- Git
 
-## Method 1: Plugin System (Recommended)
-
-**Coming soon** - will be available via Claude Code plugin marketplace.
-
-```bash
-claude plugin install jam-claude
-/jam on
-```
-
-## Method 2: Manual Installation
-
-### Step 1: Clone Repository
+## Quick Install
 
 ```bash
 git clone https://github.com/Bad-Listener/jam-claude.git \
   ~/.claude/plugins/jam-claude
+~/.claude/plugins/jam-claude/install.sh
 ```
 
-### Step 2: Verify Installation
+Restart Claude Code. Done!
 
-```bash
-ls ~/.claude/plugins/jam-claude/
-```
+## What the Install Script Does
 
-Expected output:
-```
-README.md
-LICENSE
-hooks/
-vendor/
-commands/
-lib/
-.claude-plugin/
-```
+The script handles Claude Code's 3-layer plugin registration:
 
-### Step 3: Check Sounds Installed
+1. **Marketplace registration** (`known_marketplaces.json`) - makes Claude Code aware of the plugin
+2. **Install registry** (`installed_plugins.json`) - registers the installed version
+3. **Plugin enable** (`settings.json`) - activates the plugin
+4. **Cache setup** - copies files to the runtime cache directory
+5. **Config** - creates `~/.config/claude/sounds.conf` with `SOUND_MODE=jam`
 
-```bash
-ls ~/.claude/plugins/jam-claude/vendor/sounds/ | wc -l
-```
+## Verify Installation
 
-Expected: `90+` sound files
+After restarting Claude Code:
 
-### Step 4: Verify Hooks Registration
+1. You should hear "Welcome to NBA Jam!" and see the ASCII banner
+2. Type `/jam` to check status
+3. Ask Claude a question — you should hear a sound when it finishes responding
 
-```bash
-cat ~/.claude/plugins/jam-claude/hooks/hooks.json
-```
-
-Should show SessionStart, Stop, Notification, SessionEnd hooks.
-
-### Step 5: Restart Claude Code
-
-Exit any running Claude Code sessions and start a new one.
-
-### Step 6: Enable JAM Mode
-
-```bash
-/jam on
-```
-
-Expected output: "BOOMSHAKALAKA! JAM mode activated!"
-
-### Step 7: Test Sound Playback
-
-Start a new session - you should hear "Welcome to NBA Jam!"
-
-If no sound, see Troubleshooting below.
-
-## Platform-Specific Notes
+## Platform Notes
 
 ### macOS
 
@@ -85,20 +43,16 @@ No additional setup needed. Uses built-in `afplay`.
 
 ### Linux
 
-Install audio player:
+Install an audio player:
 
-**Debian/Ubuntu:**
 ```bash
+# Debian/Ubuntu
 sudo apt-get install alsa-utils
-```
 
-**Fedora/RHEL:**
-```bash
+# Fedora/RHEL
 sudo dnf install alsa-utils
-```
 
-**Arch:**
-```bash
+# Arch
 sudo pacman -S alsa-utils
 ```
 
@@ -110,98 +64,53 @@ Requires PowerShell (built-in). May need to enable script execution:
 Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
 ```
 
-## Uninstallation
-
-### Disable JAM Mode
+## Uninstall
 
 ```bash
-/jam off
+~/.claude/plugins/jam-claude/uninstall.sh
 ```
 
-### Remove Plugin
+To also remove the source code:
 
 ```bash
 rm -rf ~/.claude/plugins/jam-claude
-```
-
-### Remove Config
-
-```bash
-rm ~/.config/claude/sounds.conf
-rm ~/.config/claude/jam-streak.json
 ```
 
 ## Troubleshooting
 
 ### No Sounds Playing
 
-**Check JAM mode enabled:**
-```bash
-cat ~/.config/claude/sounds.conf
-```
-
-Should show: `SOUND_MODE=jam`
-
-**Test audio system:**
-```bash
-# macOS
-afplay /System/Library/Sounds/Glass.aiff
-
-# Linux
-aplay /usr/share/sounds/alsa/Front_Center.wav
-```
-
-**Check environment:**
-```bash
-echo $CLAUDE_DISABLE_SOUNDS
-```
-
-Should be empty. If set, unset it:
-```bash
-unset CLAUDE_DISABLE_SOUNDS
-```
+1. Check JAM mode enabled: `/jam`
+2. Enable if off: `/jam on`
+3. Test audio system: `afplay /System/Library/Sounds/Glass.aiff`
+4. Check environment: `echo $CLAUDE_DISABLE_SOUNDS` (should be empty)
 
 ### Ruby Errors
 
-**Check Ruby installed:**
 ```bash
-ruby --version
-```
-
-Should show Ruby 2.7+ (macOS includes Ruby)
-
-**Enable debug mode:**
-```bash
-export RUBY_CLAUDE_HOOKS_DEBUG=1
-```
-
-Check Claude Code output for detailed errors.
-
-### Permission Errors
-
-**Make entrypoints executable:**
-```bash
-chmod +x ~/.claude/plugins/jam-claude/hooks/entrypoints/*.rb
+ruby --version          # Should show Ruby 2.7+
+export RUBY_CLAUDE_HOOKS_DEBUG=1  # Enable debug output
 ```
 
 ### Hooks Not Triggering
 
-**Check hooks.json exists:**
-```bash
-cat ~/.claude/plugins/jam-claude/hooks/hooks.json
-```
+1. Restart Claude Code (exit all sessions, reopen)
+2. Check install: `cat ~/.claude/plugins/installed_plugins.json | grep jam-claude`
+3. Re-run installer: `~/.claude/plugins/jam-claude/install.sh`
 
-**Restart Claude Code:**
-Exit all sessions and start fresh.
+### Permission Errors
+
+```bash
+chmod +x ~/.claude/plugins/jam-claude/hooks/entrypoints/*.rb
+```
 
 ## Advanced Configuration
 
-### Adjust Sound Volume
+### Adjust Volume
 
-Edit `~/.claude/plugins/jam-claude/hooks/lib/sound_player.rb`:
+Edit `hooks/lib/sound_player.rb`:
 
 ```ruby
-# macOS command
 "afplay -v 0.3 #{escaped_path}"
 #         ^^^
 # Change 0.3 to desired volume (0.0-1.0)
@@ -209,10 +118,9 @@ Edit `~/.claude/plugins/jam-claude/hooks/lib/sound_player.rb`:
 
 ### Change Sound Mappings
 
-Edit handler files:
-- `hooks/handlers/stop_handler.rb` - Success sounds
+- `hooks/handlers/stop_handler.rb` - Success/completion sounds
 - `hooks/handlers/notification_handler.rb` - Notification sounds
-- `hooks/handlers/session_end_handler.rb` - End sounds
+- `hooks/handlers/session_end_handler.rb` - Game over sounds
 
 ### Reset Streak
 

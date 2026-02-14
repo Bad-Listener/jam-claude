@@ -27,26 +27,15 @@ Bring the legendary energy of NBA Jam to your coding sessions. Every command bec
 
 ## Installation
 
-### Via Claude Code Plugin System (Coming Soon)
-
-```bash
-claude plugin install jam-claude
-```
-
-### Manual Installation
-
-1. Clone to plugins directory:
 ```bash
 git clone https://github.com/Bad-Listener/jam-claude.git \
   ~/.claude/plugins/jam-claude
+~/.claude/plugins/jam-claude/install.sh
 ```
 
-2. Restart Claude Code
+Then restart Claude Code. That's it!
 
-3. Enable JAM mode:
-```bash
-/jam on
-```
+JAM mode is enabled by default. Use `/jam off` to disable.
 
 ## Usage
 
