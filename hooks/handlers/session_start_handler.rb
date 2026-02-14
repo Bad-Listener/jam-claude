@@ -3,6 +3,7 @@
 require_relative '../lib/sound_player'
 require_relative '../lib/ascii_banner'
 require_relative '../lib/session_stats'
+require_relative '../lib/update_checker'
 
 # JAM Claude SessionStart Handler
 #
