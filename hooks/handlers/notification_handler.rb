@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 require_relative '../lib/sound_player'
+require_relative '../lib/session_stats'
+require_relative '../../lib/jam_config'
 
 # JAM Claude Notification Handler
 #
@@ -21,6 +23,8 @@ class JamClaudeNotificationHandler < ClaudeHooks::Notification
   def call
     type = notification_type || 'unknown'
     log "JAM Claude: Notification (#{type})"
+
+    SessionStats.increment_blocks if type == 'permission_prompt' && JamConfig.jam?
 
     sound = NOTIFICATION_SOUNDS[type] || DEFAULT_SOUND
     success = SoundPlayer.play(sound, self)
