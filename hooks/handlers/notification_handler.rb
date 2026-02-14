@@ -1,0 +1,33 @@
+# frozen_string_literal: true
+
+require_relative '../lib/sound_player'
+
+# JAM Claude Notification Handler
+#
+# Plays referee/game sounds for different notification types:
+# - permission_prompt: Whistle (asking for approval)
+# - idle_prompt: Buzz (shot clock running out)
+# - elicitation_dialog: Horn (timeout, need input)
+
+class JamClaudeNotificationHandler < ClaudeHooks::Notification
+  NOTIFICATION_SOUNDS = {
+    'permission_prompt' => '41 - Whistle.wav',
+    'idle_prompt' => '29 - Buzz1.wav',
+    'elicitation_dialog' => '39 - Horn.wav'
+  }.freeze
+
+  DEFAULT_SOUND = '41 - Whistle.wav'
+
+  def call
+    type = notification_type || 'unknown'
+    log "JAM Claude: Notification (#{type})"
+
+    sound = NOTIFICATION_SOUNDS[type] || DEFAULT_SOUND
+    success = SoundPlayer.play(sound, self)
+
+    log success ? "JAM Claude: Played #{sound}" : "JAM Claude: Failed to play #{sound}",
+        level: success ? :info : :warn
+
+    output_data
+  end
+end
