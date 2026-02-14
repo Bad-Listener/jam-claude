@@ -2,7 +2,7 @@
 
 > **BOOMSHAKALAKA!** NBA Jam sound effects and commentary for Claude Code
 
-Bring the legendary energy of NBA Jam to your coding sessions. Every command becomes a basketball game with classic commentator sounds, on-fire streaks, and boomshakalaka moments.
+Bring the legendary energy of NBA Jam to your coding sessions. Every command becomes a basketball game with classic commentator sounds, on-fire streaks, and boomshakalaka moments. Just a fun project, all rights belong to their respective owners.
 
 ## Demo
 
