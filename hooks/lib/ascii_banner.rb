@@ -17,9 +17,9 @@ module AsciiBanner
   class << self
     # Display the JAM Claude banner
     def display
-      puts NBA_JAM_LOGO
-      puts "   🏀 BOOMSHAKALAKA! JAM MODE ACTIVATED 🏀"
-      puts
+      $stderr.puts NBA_JAM_LOGO
+      $stderr.puts "   🏀 BOOMSHAKALAKA! JAM MODE ACTIVATED 🏀"
+      $stderr.puts
     end
   end
 end

@@ -99,29 +99,24 @@ module SoundPlayer
 
       case detect_platform
       when :macos
-        "afplay -v 0.3 #{escaped_path} 2>/dev/null &"
+        "afplay -v 0.3 #{escaped_path}"
       when :windows
-        "(New-Object Media.SoundPlayer '#{sound_path}').PlaySync() 2>$null &"
+        "(New-Object Media.SoundPlayer '#{sound_path}').PlaySync()"
       when :linux
-        "{ aplay -q #{escaped_path} || paplay #{escaped_path} || ffplay -nodisp -autoexit #{escaped_path}; } 2>/dev/null &"
+        "aplay -q #{escaped_path} || paplay #{escaped_path} || ffplay -nodisp -autoexit #{escaped_path}"
       else
-        "echo 'Unsupported platform for sound playback' >/dev/null &"
+        "true"
       end
     end
 
-    # Execute the sound play command
+    # Execute the sound play command using spawn for non-blocking playback
     # @param command [String] shell command to execute
     # @param logger [Object] optional logger
     # @return [Boolean] true if command executed successfully
     def execute_command(command, logger)
-      result = system(command)
-
-      if result.nil?
-        log_error("Failed to execute sound command: #{command}", logger)
-        false
-      else
-        true
-      end
+      pid = spawn(command, [:out, :err] => '/dev/null')
+      Process.detach(pid)
+      true
     rescue StandardError => e
       log_error("Sound playback error: #{e.message}", logger)
       false
