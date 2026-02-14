@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require 'rbconfig'
+require 'shellwords'
 require_relative '../../lib/jam_config'
 
 # SoundPlayer Module for JAM Claude
@@ -137,11 +138,11 @@ module SoundPlayer
       end
     end
 
-    # Escape shell arguments to prevent injection
+    # Escape shell arguments safely
     # @param path [String] file path to escape
     # @return [String] shell-escaped path
     def shell_escape(path)
-      "'#{path.gsub("'", "\\'")}'"
+      Shellwords.shellescape(path)
     end
 
     # Log error message

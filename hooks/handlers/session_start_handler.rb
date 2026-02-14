@@ -8,7 +8,6 @@ require_relative '../lib/ascii_banner'
 # On session start:
 # - Display ASCII banner
 # - Play "Welcome to NBA Jam" sound
-# - Inject spinner instructions
 # - Inject commentary guidelines
 
 class JamClaudeSessionStartHandler < ClaudeHooks::SessionStart
@@ -26,11 +25,8 @@ class JamClaudeSessionStartHandler < ClaudeHooks::SessionStart
     log success ? 'JAM Claude: Played welcome sound' : 'JAM Claude: Failed to play sound',
         level: success ? :info : :warn
 
-    # Inject spinner instructions for NBA Jam phrases
-    inject_spinner_instructions
-
-    # Inject commentary guidelines
-    inject_commentary_guidelines
+    # Inject commentary guidelines as additional context
+    add_additional_context!(jam_context)
 
     allow_continue!
     suppress_output!
@@ -39,25 +35,9 @@ class JamClaudeSessionStartHandler < ClaudeHooks::SessionStart
 
   private
 
-  def inject_spinner_instructions
-    output_system_reminder(<<~INSTRUCTIONS)
+  def jam_context
+    <<~CONTEXT
       JAM Claude Mode Active 🏀
-
-      When using tools with activeForm parameter, use NBA Jam phrases:
-      - Read: "From Downtown!"
-      - Write/Edit: "He's Heating Up!"
-      - Bash: "Boomshakalaka!"
-      - Grep/Glob: "Wide Open!"
-      - Git: "Monster Jam!"
-      - Tests/Verify: "Razzle Dazzle!"
-      - Task/Agent: "Show Time!"
-      - Web/Fetch: "From the Parking Lot!"
-    INSTRUCTIONS
-  end
-
-  def inject_commentary_guidelines
-    output_system_reminder(<<~COMMENTARY)
-      JAM Claude Commentary Mode:
 
       Occasionally use these NBA Jam phrases naturally in responses:
       - "BOOMSHAKALAKA!" (after impressive solutions)
@@ -71,6 +51,6 @@ class JamClaudeSessionStartHandler < ClaudeHooks::SessionStart
       - Let energy emerge naturally, not forced
       - Bold the phrase: **BOOMSHAKALAKA!**
       - Only when genuinely appropriate
-    COMMENTARY
+    CONTEXT
   end
 end

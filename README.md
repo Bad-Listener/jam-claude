@@ -13,13 +13,6 @@ Bring the legendary energy of NBA Jam to your coding sessions. Every command bec
 - Notifications: Whistles, buzzers, horns
 - Game over: "Wins The Game!"
 
-🎯 **Custom Spinners**
-- Reading files: "From Downtown!"
-- Writing code: "He's Heating Up!"
-- Running tests: "Razzle Dazzle!"
-- Git operations: "Monster Jam!"
-- Bash commands: "Boomshakalaka!"
-
 🔥 **Streak Tracking**
 - Consecutive successes build your streak
 - 3+ streak: "He's on Fire!" sound unlocked
@@ -69,7 +62,6 @@ git clone https://github.com/Bad-Listener/jam-claude.git \
 
 Just use Claude Code normally! JAM Claude adds:
 - Sound effects for events
-- NBA Jam spinner phrases
 - Occasional commentary in responses
 - Streak tracking across commands
 
@@ -117,7 +109,7 @@ JAM Claude uses Claude Code's hooks system:
 3. **Notification**: Referee sounds (whistles, buzzers)
 4. **SessionEnd**: Game over sounds
 
-Spinner customization via system prompt injection.
+Commentary injection via SessionStart additional context.
 
 ## Troubleshooting
 
@@ -165,7 +157,6 @@ Contributions welcome! Please:
 ### 1.0.0 (2026-02-14)
 - Initial release
 - Sound effects for all hooks
-- Spinner customization
 - Streak tracking
 - Commentary injection
 - /jam toggle command

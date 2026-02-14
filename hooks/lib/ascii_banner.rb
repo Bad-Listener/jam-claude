@@ -23,8 +23,8 @@ module AsciiBanner
         tty.puts "   🏀 BOOMSHAKALAKA! JAM MODE ACTIVATED 🏀"
         tty.puts
       end
-    rescue Errno::ENODEV, Errno::ENOENT
-      # No terminal available (e.g., running in background)
+    rescue Errno::ENODEV, Errno::ENOENT, Errno::ENXIO
+      # No terminal available (e.g., running in background or piped)
     end
   end
 end
