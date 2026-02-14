@@ -53,7 +53,6 @@ Type these in the Claude Code chat:
 /jam-claude:jam on      # Enable JAM Claude
 /jam-claude:jam off     # Disable JAM Claude
 /jam-claude:jam         # Show current status
-/jam-claude:jam demo    # Play all sounds tour
 ```
 
 ### During Sessions
