@@ -7,11 +7,15 @@ require_relative '../lib/ascii_banner'
 #
 # On session start:
 # - Display ASCII banner
-# - Play "Welcome to NBA Jam" sound
+# - Play a startup sound (weighted random)
 # - Inject commentary guidelines
 
 class JamClaudeSessionStartHandler < ClaudeHooks::SessionStart
-  STARTUP_SOUND = '28 - Welcome to NBA Jam.wav'
+  STARTUP_SOUNDS = {
+    '28 - Welcome to NBA Jam.wav' => 0.65,
+    'Hello.wav' => 0.20,
+    "Tonight's Matchup.wav" => 0.15
+  }.freeze
 
   def call
     source_type = source || 'unknown'
@@ -20,8 +24,8 @@ class JamClaudeSessionStartHandler < ClaudeHooks::SessionStart
     # Display banner
     AsciiBanner.display
 
-    # Play welcome sound
-    success = SoundPlayer.play(STARTUP_SOUND, self)
+    # Play weighted random startup sound
+    success = SoundPlayer.play_weighted(STARTUP_SOUNDS, self)
     log success ? 'JAM Claude: Played welcome sound' : 'JAM Claude: Failed to play sound',
         level: success ? :info : :warn
 
