@@ -7,11 +7,13 @@ require_relative '../lib/sound_player'
 # Plays game over sounds when session ends:
 # - "exit": "Wins The Game"
 # - "clear": "At the Buzzer"
+# - "prompt_input_exit": "Overtime" (quit at the prompt — we went to overtime)
 
 class JamClaudeSessionEndHandler < ClaudeHooks::SessionEnd
   END_SOUNDS = {
     'exit' => 'Wins The Game.wav',
-    'clear' => 'At the Buzzer.wav'
+    'clear' => 'At the Buzzer.wav',
+    'prompt_input_exit' => 'Overtime.wav'
   }.freeze
 
   DEFAULT_SOUND = 'Wins The Game.wav'

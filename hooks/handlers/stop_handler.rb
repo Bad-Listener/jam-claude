@@ -8,21 +8,30 @@ require_relative '../lib/streak_tracker'
 # Plays success sounds when Claude finishes responding.
 # Uses weighted random based on current streak.
 #
-# Weights:
-# - Normal (0-2 streak): "It's Good" (40%), "From Downtown" (25%), "Monster Jam" (20%)
-# - On Fire (3+ streak): "He's on Fire" (15%)
-# - Super Hot (5+ streak): "He's on Fire" (30%)
+# Streak progression (classic NBA Jam sequence):
+# - Normal (0-1 streak): Weighted random from base pool
+# - Heating Up (2 streak): "Heating Up" guaranteed
+# - On Fire (3-4 streak): Base pool + "He's on Fire" (15%)
+# - Super Hot (5+ streak): Base pool + "He's on Fire" (30%)
 
 class JamClaudeStopHandler < ClaudeHooks::Stop
   # Base sounds (always available)
   BASE_SOUNDS = {
-    "It's Good.wav" => 0.40,
-    'From Downtown.wav' => 0.25,
-    'Monster Jam.wav' => 0.20,
-    'Kaboom.wav' => 0.15
+    "It's Good.wav" => 0.20,
+    'From Downtown.wav' => 0.15,
+    'Monster Jam.wav' => 0.12,
+    'Kaboom.wav' => 0.10,
+    'Scores.wav' => 0.10,
+    'Slams It.wav' => 0.10,
+    'Razzle Dazzle.wav' => 0.08,
+    'Show Time.wav' => 0.05,
+    'Hooks It In.wav' => 0.04,
+    'Woah.wav' => 0.03,
+    'Yes.wav' => 0.03
   }.freeze
 
-  # Fire sound (unlocked at 3+ streak)
+  # Streak sounds
+  HEATING_UP_SOUND = 'Heating Up.wav'
   FIRE_SOUND = "He's on Fire.wav"
 
   def call
@@ -48,15 +57,18 @@ class JamClaudeStopHandler < ClaudeHooks::Stop
   private
 
   def calculate_sound_weights(streak)
+    # Streak 2: guaranteed "Heating Up" (classic Jam progression)
+    if streak == 2
+      return { HEATING_UP_SOUND => 1.0 }
+    end
+
     weights = BASE_SOUNDS.dup
 
     # Unlock "He's on Fire" at 3+ streak
     if streak >= 3 && streak < 5
-      # Reduce base weights slightly, add fire
       weights = weights.transform_values { |w| w * 0.85 }
       weights[FIRE_SOUND] = 0.15
     elsif streak >= 5
-      # Super hot: higher fire chance
       weights = weights.transform_values { |w| w * 0.70 }
       weights[FIRE_SOUND] = 0.30
     end
