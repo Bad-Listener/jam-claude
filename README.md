@@ -4,16 +4,6 @@
 
 Bring the legendary energy of NBA Jam to your coding sessions. Every command becomes a basketball game with classic commentator sounds, on-fire streaks, and boomshakalaka moments.
 
-## Demo
-
-<!-- To add the demo video:
-     1. Record: bash demo/record-demo.sh (while screen recording with audio)
-     2. Upload the MP4 to a GitHub issue comment (drag-drop), copy the generated URL
-     3. Cancel the issue, paste the URL below on its own line
-     4. GitHub auto-renders MP4 URLs as inline video players -->
-
-https://github.com/Bad-Listener/jam-claude/assets/PLACEHOLDER/demo.mp4
-
 ## Features
 
 🔊 **NBA Jam Sound Effects**
