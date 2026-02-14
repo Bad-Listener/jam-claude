@@ -1,6 +1,9 @@
 # frozen_string_literal: true
 
 require_relative '../lib/sound_player'
+require_relative '../lib/session_stats'
+require_relative '../lib/box_score'
+require_relative '../../lib/jam_config'
 
 # JAM Claude SessionEnd Handler
 #
@@ -28,8 +31,24 @@ class JamClaudeSessionEndHandler < ClaudeHooks::SessionEnd
     log success ? "JAM Claude: Played #{sound}" : "JAM Claude: Failed to play sound",
         level: success ? :info : :warn
 
+    display_box_score
+
     allow_continue!
     suppress_output!
     output_data
+  end
+
+  private
+
+  def display_box_score
+    return unless JamConfig.jam?
+
+    stats = SessionStats.stats
+    return if stats['points'] <= 0
+
+    BoxScore.display(stats, stats['peak_streak'], stats['was_on_fire'])
+    SessionStats.reset
+  rescue StandardError => e
+    log "JAM Claude: Box score display failed: #{e.message}", level: :warn
   end
 end

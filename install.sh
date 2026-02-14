@@ -229,6 +229,9 @@ main() {
   setup_cache
   setup_config
 
+  # Clear stale update notification after fresh install
+  rm -f "$HOME/.config/claude/jam-update.json"
+
   echo ""
   echo -e "  ${GREEN}${BOLD}BOOMSHAKALAKA! Installation complete!${RESET}"
   echo ""
