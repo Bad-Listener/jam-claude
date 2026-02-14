@@ -2,6 +2,7 @@
 
 require 'json'
 require 'fileutils'
+require 'time'
 
 # StreakTracker - Track consecutive successful Claude operations
 #
