@@ -41,7 +41,7 @@ git clone https://github.com/Bad-Listener/jam-claude.git \
 
 Then restart Claude Code. That's it!
 
-JAM mode is enabled by default. Use `/jam off` to disable.
+JAM mode is enabled by default. Use `/jam-claude:jam off` to disable.
 
 ## Usage
 
@@ -50,10 +50,10 @@ JAM mode is enabled by default. Use `/jam off` to disable.
 Type these in the Claude Code chat:
 
 ```
-/jam on      # Enable JAM Claude
-/jam off     # Disable JAM Claude
-/jam         # Show current status
-/jam demo    # Play all sounds tour
+/jam-claude:jam on      # Enable JAM Claude
+/jam-claude:jam off     # Disable JAM Claude
+/jam-claude:jam         # Show current status
+/jam-claude:jam demo    # Play all sounds tour
 ```
 
 ### During Sessions
@@ -106,8 +106,8 @@ Commentary injection via SessionStart additional context.
 ## Troubleshooting
 
 **No sounds playing?**
-1. Check JAM mode: `/jam`
-2. Enable if off: `/jam on`
+1. Check JAM mode: `/jam-claude:jam`
+2. Enable if off: `/jam-claude:jam on`
 3. Test audio: `afplay /System/Library/Sounds/Glass.aiff`
 4. Check env: `echo $CLAUDE_DISABLE_SOUNDS` (should be empty)
 
@@ -151,4 +151,4 @@ Contributions welcome! Please:
 - Sound effects for all hooks
 - Streak tracking
 - Commentary injection
-- /jam toggle command
+- /jam-claude:jam toggle command
