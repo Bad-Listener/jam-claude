@@ -105,6 +105,8 @@ The installer (`install.sh`) registers across three layers — all must be in sy
 - `refactor/` - code restructuring
 - `docs/` - documentation only changes
 
+5. When we are ready to send a PR, always increase minor version and create a changelog entry. 
+
 ### Pull Request Workflow
 
 When the feature is complete and approved:
