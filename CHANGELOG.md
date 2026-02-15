@@ -9,6 +9,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 
 
+## [1.1.0] - 2026-02-15
+
+### Added
+- Commentary frequency settings: `/jam frequent`, `/jam normal`, `/jam low`
+- Low mode: milestone-only sounds (streak 2+ only), no notification sounds, critical errors only
+- Contextual sound commentary (frequent mode): event-specific sounds for large writes, test passes, big edits, code deletion, and long commands
+- Cross-hook state coordination to prevent double sounds when contextual commentary fires
+
 ## [1.0.4] - 2026-02-15
 
 ### Changed

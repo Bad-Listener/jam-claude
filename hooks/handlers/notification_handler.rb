@@ -10,6 +10,8 @@ require_relative '../../lib/jam_config'
 # - permission_prompt: Whistle (asking for approval)
 # - idle_prompt: Buzz (shot clock running out)
 # - elicitation_dialog: Horn (timeout, need input)
+#
+# In low mode: sounds are skipped entirely (stats still tracked)
 
 class JamClaudeNotificationHandler < ClaudeHooks::Notification
   NOTIFICATION_SOUNDS = {
@@ -25,6 +27,12 @@ class JamClaudeNotificationHandler < ClaudeHooks::Notification
     log "JAM Claude: Notification (#{type})"
 
     SessionStats.increment_blocks if type == 'permission_prompt' && JamConfig.jam?
+
+    # Low mode: skip notification sounds entirely
+    if JamConfig.low?
+      log 'JAM Claude: Low mode — skipping notification sound'
+      return output_data
+    end
 
     sound = NOTIFICATION_SOUNDS[type] || DEFAULT_SOUND
     success = SoundPlayer.play(sound, self)
