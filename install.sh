@@ -21,15 +21,15 @@ BOLD='\033[1m'
 RESET='\033[0m'
 
 banner() {
+  # Fire gradient: gold(220) → amber(214) → orange(208) → dark_orange(208) → red_orange(202) → deep_red(160)
   echo ""
-  echo -e "${CYAN}${BOLD}"
-  echo "       ███╗   ██╗██████╗  █████╗          ██╗ █████╗ ███╗   ███╗"
-  echo "       ████╗  ██║██╔══██╗██╔══██╗         ██║██╔══██╗████╗ ████║"
-  echo "       ██╔██╗ ██║██████╔╝███████║         ██║███████║██╔████╔██║"
-  echo "       ██║╚██╗██║██╔══██╗██╔══██║    ██   ██║██╔══██║██║╚██╔╝██║"
-  echo "       ██║ ╚████║██████╔╝██║  ██║    ╚█████╔╝██║  ██║██║ ╚═╝ ██║"
-  echo "       ╚═╝  ╚═══╝╚═════╝ ╚═╝  ╚═╝     ╚════╝ ╚═╝  ╚═╝╚═╝     ╚═╝"
-  echo -e "${RESET}"
+  echo -e "\033[38;5;220m       ███╗   ██╗██████╗  █████╗          ██╗ █████╗ ███╗   ███╗${RESET}"
+  echo -e "\033[38;5;214m       ████╗  ██║██╔══██╗██╔══██╗         ██║██╔══██╗████╗ ████║${RESET}"
+  echo -e "\033[38;5;208m       ██╔██╗ ██║██████╔╝███████║         ██║███████║██╔████╔██║${RESET}"
+  echo -e "\033[38;5;208m       ██║╚██╗██║██╔══██╗██╔══██║    ██   ██║██╔══██║██║╚██╔╝██║${RESET}"
+  echo -e "\033[38;5;202m       ██║ ╚████║██████╔╝██║  ██║    ╚█████╔╝██║  ██║██║ ╚═╝ ██║${RESET}"
+  echo -e "\033[38;5;160m       ╚═╝  ╚═══╝╚═════╝ ╚═╝  ╚═╝     ╚════╝ ╚═╝  ╚═╝╚═╝     ╚═╝${RESET}"
+  echo ""
   echo -e "                      ${BOLD}JAM Claude Installer${RESET}"
   echo ""
 }
@@ -265,7 +265,7 @@ main() {
   rm -f "$HOME/.config/claude/jam-update.json"
 
   echo ""
-  echo -e "  ${GREEN}${BOLD}BOOMSHAKALAKA! Installation complete!${RESET}"
+  echo -e "  \033[38;5;220m${BOLD}BOOMSHAKALAKA! Installation complete!${RESET}"
   echo ""
   echo -e "  ${BOLD}Next steps:${RESET}"
   echo "  1. Restart Claude Code (exit and reopen)"

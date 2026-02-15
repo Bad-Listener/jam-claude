@@ -1,22 +1,16 @@
 # frozen_string_literal: true
 
+require_relative 'fire_colors'
+
 # FactPresenter - Transform NBA facts into engaging TikTok-style presentation
 # Formats facts with colored stripes, category labels, wrapped text, and reactions
 
 module FactPresenter
-  # ANSI color codes (match BoxScore pattern)
-  YELLOW = "\e[93m"  # Stripes, reactions
-  WHITE  = "\e[97m"  # Fact text
-  CYAN   = "\e[96m"  # Category labels
-  BOLD   = "\e[1m"
-  DIM    = "\e[2m"
-  RESET  = "\e[0m"
-
   # Layout constants
   STRIPE = '━'  # Unicode U+2501
-  STRIPE_WIDTH = 57         # Matches NBA JAM logo width (<<~ strips indent)
+  STRIPE_WIDTH = 64         # Matches NBA JAM logo width (7-space indent + 57 content)
   CONTENT_INDENT = '  '    # 2-space breathing room inside stripes
-  CONTENT_WIDTH = 53       # 57 - (2 left + 2 right padding)
+  CONTENT_WIDTH = 60       # 64 - (2 left + 2 right padding)
 
   # Human-readable category labels
   CATEGORY_LABELS = {
@@ -53,19 +47,19 @@ module FactPresenter
 
       # Build presentation
       lines = []
-      lines << "#{YELLOW}#{STRIPE * STRIPE_WIDTH}#{RESET}"
-      lines << "#{CONTENT_INDENT}#{emoji}  #{CYAN}#{BOLD}#{label}#{RESET}"
+      lines << "#{FireColors.red_orange}#{STRIPE * STRIPE_WIDTH}#{FireColors.reset}"
+      lines << "#{CONTENT_INDENT}#{emoji}  #{FireColors.gold}#{FireColors.bold}#{label}#{FireColors.reset}"
       lines << ""
 
       # Wrap and format fact text
       wrapped_lines = wrap_fact(fact_text)
       wrapped_lines.each do |line|
-        lines << "#{CONTENT_INDENT}#{WHITE}#{bold_keywords(line)}#{RESET}"
+        lines << "#{CONTENT_INDENT}#{FireColors.warm_white}#{bold_keywords(line)}#{FireColors.reset}"
       end
 
       lines << ""
-      lines << "#{CONTENT_INDENT}#{YELLOW}#{DIM}#{reaction}#{RESET}"
-      lines << "#{YELLOW}#{STRIPE * STRIPE_WIDTH}#{RESET}"
+      lines << "#{CONTENT_INDENT}#{FireColors.dim_orange}#{FireColors.dim}#{reaction}#{FireColors.reset}"
+      lines << "#{FireColors.red_orange}#{STRIPE * STRIPE_WIDTH}#{FireColors.reset}"
 
       lines.join("\n")
     end
@@ -99,14 +93,18 @@ module FactPresenter
     # @param text [String] line of text to process
     # @return [String] text with ANSI bold codes inserted
     def bold_keywords(text)
+      bold = FireColors.bold
+      reset = FireColors.reset
+      white = FireColors.warm_white
+
       # Bold numbers (including decimals, commas, percentages)
-      text = text.gsub(/\b(\d+(?:,\d{3})*(?:\.\d+)?%?)\b/, "#{BOLD}\\1#{RESET}#{WHITE}")
+      text = text.gsub(/\b(\d+(?:,\d{3})*(?:\.\d+)?%?)\b/, "#{bold}\\1#{reset}#{white}")
 
       # Bold currency (e.g., $2,400, $1 billion)
-      text = text.gsub(/(\$\d+(?:,\d{3})*(?:\.\d+)?(?:\s*(?:million|billion))?)/, "#{BOLD}\\1#{RESET}#{WHITE}")
+      text = text.gsub(/(\$\d+(?:,\d{3})*(?:\.\d+)?(?:\s*(?:million|billion))?)/, "#{bold}\\1#{reset}#{white}")
 
       # Bold superlatives (case-insensitive)
-      text = text.gsub(/\b(first|last|only|never|most|highest|lowest|fastest|greatest)\b/i, "#{BOLD}\\1#{RESET}#{WHITE}")
+      text = text.gsub(/\b(first|last|only|never|most|highest|lowest|fastest|greatest)\b/i, "#{bold}\\1#{reset}#{white}")
 
       text
     end

@@ -9,6 +9,23 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 
 
+
+## [1.2.0] - 2026-02-15
+
+### Added
+- Fire gradient theme — NBA JAM arcade-inspired red-to-gold color palette
+- Auto-detecting terminal color support (truecolor → 256-color → basic 16 fallback)
+- `NO_COLOR` environment variable support (https://no-color.org/)
+- Per-line gradient coloring on the ASCII logo (gold → deep red)
+- Unicode double-line borders on the post-game box score (╔═╗║╚╝╠╣)
+
+### Changed
+- Banner activation line now gold + bold, version line dim orange
+- Fact card stripes now red-orange, category labels gold, text warm white
+- Box score borders red-orange, stat labels amber, header gold
+- "ON FIRE" indicator now includes 🔥 prefix in fire red
+- Install script banner uses 256-color fire gradient
+
 ## [1.1.0] - 2026-02-15
 
 ### Added
