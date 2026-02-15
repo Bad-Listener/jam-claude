@@ -5,8 +5,8 @@ require 'rbconfig'
 # BoxScore - Display post-game basketball stats for the coding session
 #
 # Renders an NBA Jam style box score to the terminal on session end.
-# Writes to stderr to bypass stdout JSON (which Claude Code parses as hook output).
-# Falls back to /dev/tty if stderr is unavailable.
+# Writes directly to /dev/tty to bypass both stdout (JSON hook output) and
+# stderr (not displayed during SessionEnd hooks).
 
 module BoxScore
   # ANSI color codes
@@ -31,13 +31,12 @@ module BoxScore
     def display(stats, peak_streak, was_on_fire)
       output = render(stats, peak_streak, was_on_fire)
 
-      # Primary: write to stderr (Claude Code displays hook stderr to user)
-      $stderr.puts output
-    rescue IOError, Errno::EPIPE
-      # stderr unavailable, try /dev/tty as fallback
+      # Write directly to terminal, bypassing stdout (JSON) and stderr
+      # SessionEnd hook stderr is not displayed to the user, so we must
+      # use /dev/tty (same approach as AsciiBanner in SessionStart)
       tty_path = windows? ? 'CON' : '/dev/tty'
       File.open(tty_path, 'w') { |tty| tty.puts output }
-    rescue Errno::ENODEV, Errno::ENOENT, Errno::ENXIO, Errno::EACCES
+    rescue Errno::ENODEV, Errno::ENOENT, Errno::ENXIO, Errno::EACCES, IOError, Errno::EPIPE
       # No terminal available at all — silent fail
     end
 
