@@ -4,12 +4,12 @@
 set -euo pipefail
 
 PLUGIN_NAME="jam-claude"
-PLUGIN_VERSION="1.0.0"
+SOURCE_DIR="$(cd "$(dirname "$0")" && pwd)"
+PLUGIN_VERSION=$(ruby -rjson -e 'puts JSON.parse(File.read(ARGV[0]))["version"]' "$SOURCE_DIR/.claude-plugin/plugin.json")
 CLAUDE_DIR="$HOME/.claude"
 PLUGINS_DIR="$CLAUDE_DIR/plugins"
 CACHE_DIR="$PLUGINS_DIR/cache/$PLUGIN_NAME/$PLUGIN_NAME/$PLUGIN_VERSION"
 MARKETPLACE_DIR="$PLUGINS_DIR/marketplaces/$PLUGIN_NAME"
-SOURCE_DIR="$(cd "$(dirname "$0")" && pwd)"
 TIMESTAMP=$(date -u +"%Y-%m-%dT%H:%M:%S.000Z")
 
 # Colors
@@ -237,8 +237,8 @@ main() {
   echo ""
   echo -e "  ${BOLD}Next steps:${RESET}"
   echo "  1. Restart Claude Code (exit and reopen)"
-  echo -e "  2. Type ${CYAN}/jam${RESET} to check status"
-  echo -e "  3. Use ${CYAN}/jam on${RESET} or ${CYAN}/jam off${RESET} to toggle"
+  echo -e "  2. Type ${CYAN}/jam-claude:jam${RESET} to check status"
+  echo -e "  3. Use ${CYAN}/jam-claude:jam on${RESET} or ${CYAN}/jam-claude:jam off${RESET} to toggle"
   echo ""
 }
 
