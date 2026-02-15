@@ -30,7 +30,7 @@ banner() {
   echo "       ██║ ╚████║██████╔╝██║  ██║    ╚█████╔╝██║  ██║██║ ╚═╝ ██║"
   echo "       ╚═╝  ╚═══╝╚═════╝ ╚═╝  ╚═╝     ╚════╝ ╚═╝  ╚═╝╚═╝     ╚═╝"
   echo -e "${RESET}"
-  echo -e "   ${BOLD}JAM Claude Installer${RESET}"
+  echo -e "                      ${BOLD}JAM Claude Installer${RESET}"
   echo ""
 }
 

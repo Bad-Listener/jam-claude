@@ -50,7 +50,7 @@ module BoxScore
       lines = []
       lines << ''
       lines << "#{YELLOW}  +-----------------------------------------+#{RESET}"
-      lines << "#{YELLOW}  |#{WHITE}#{BOLD}        POST-GAME BOX SCORE              #{RESET}#{YELLOW}|#{RESET}"
+      lines << "#{YELLOW}  |#{WHITE}#{BOLD}           POST-GAME BOX SCORE           #{RESET}#{YELLOW}|#{RESET}"
       lines << "#{YELLOW}  +-----------------------------------------+#{RESET}"
       lines << "#{YELLOW}  |#{RESET}                                         #{YELLOW}|#{RESET}"
       lines << "#{YELLOW}  |#{RESET}   #{WHITE}PTS#{RESET}  #{pad(pts)}     #{WHITE}AST#{RESET}  #{pad(stats['assists'])}     #{WHITE}REB#{RESET}  #{pad(stats['rebounds'])}    #{YELLOW}|#{RESET}"
