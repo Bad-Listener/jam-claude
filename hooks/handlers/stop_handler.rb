@@ -4,6 +4,7 @@ require_relative '../lib/sound_player'
 require_relative '../lib/streak_tracker'
 require_relative '../lib/session_stats'
 require_relative '../lib/error_state'
+require_relative '../lib/contextual_sound_state'
 require_relative '../../lib/jam_config'
 
 # JAM Claude Stop Handler
@@ -16,6 +17,10 @@ require_relative '../../lib/jam_config'
 # - Heating Up (2 streak): "Heating Up" guaranteed
 # - On Fire (3-4 streak): Base pool + "He's on Fire" (15%)
 # - Super Hot (5+ streak): Base pool + "He's on Fire" (30%)
+#
+# Frequency modes:
+# - frequent/normal: Full sound pool with streak progression
+# - low: Silent for streak 0-1, Heating Up at 2, He's on Fire at 3+
 
 class JamClaudeStopHandler < ClaudeHooks::Stop
   # Base sounds (always available)
@@ -53,8 +58,24 @@ class JamClaudeStopHandler < ClaudeHooks::Stop
     SessionStats.update_peak_streak(current_streak) if JamConfig.jam?
     log "JAM Claude: Current streak: #{current_streak}"
 
-    # Determine sound weights based on streak
-    sounds = calculate_sound_weights(current_streak)
+    # Skip generic success sound if contextual sound already played this turn
+    if ContextualSoundState.played_and_clear?
+      log 'JAM Claude: Skipping success sound — contextual sound already played'
+      allow_continue!
+      suppress_output!
+      return output_data
+    end
+
+    # In low mode, only play on streak milestones
+    unless should_play_sound?(current_streak)
+      log 'JAM Claude: Low mode — skipping sound (no milestone)'
+      allow_continue!
+      suppress_output!
+      return output_data
+    end
+
+    # Determine sound weights based on streak and frequency
+    sounds = JamConfig.low? ? low_mode_sound(current_streak) : calculate_sound_weights(current_streak)
 
     # Play weighted random sound
     success = SoundPlayer.play_weighted(sounds, self)
@@ -67,6 +88,22 @@ class JamClaudeStopHandler < ClaudeHooks::Stop
   end
 
   private
+
+  # In low mode, only play sounds at streak milestones (2+)
+  def should_play_sound?(streak)
+    return true unless JamConfig.low?
+
+    streak >= 2
+  end
+
+  # Simplified sound pool for low mode
+  def low_mode_sound(streak)
+    if streak == 2
+      { HEATING_UP_SOUND => 1.0 }
+    else
+      { FIRE_SOUND => 1.0 }
+    end
+  end
 
   def calculate_sound_weights(streak)
     # Streak 2: guaranteed "Heating Up" (classic Jam progression)
