@@ -56,6 +56,30 @@ if [ -f "$CLAUDE_DIR/settings.json" ]; then
   info "Plugin disabled in settings"
 fi
 
+# Remove PostToolUse hook from settings.json
+step "Removing PostToolUse hook from settings..."
+if [ -f "$CLAUDE_DIR/settings.json" ]; then
+  ruby -rjson -e '
+    file = ARGV[0]
+    marker = ARGV[1]
+
+    data = JSON.parse(File.read(file))
+    hooks = data.dig("hooks", "PostToolUse")
+    if hooks.is_a?(Array)
+      hooks.reject! { |group|
+        (group["hooks"] || []).any? { |h| h["command"]&.include?(marker) }
+      }
+
+      # Clean up empty array / empty hooks hash
+      data["hooks"].delete("PostToolUse") if hooks.empty?
+      data.delete("hooks") if data["hooks"]&.empty?
+
+      File.write(file, JSON.pretty_generate(data) + "\n")
+    end
+  ' "$CLAUDE_DIR/settings.json" "jam-claude"
+  info "PostToolUse hook removed from settings"
+fi
+
 # Remove cache
 step "Removing cache..."
 rm -rf "$PLUGINS_DIR/cache/$PLUGIN_NAME"
