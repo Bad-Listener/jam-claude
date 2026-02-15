@@ -145,9 +145,4 @@ Contributions welcome! Please:
 
 ## Changelog
 
-### 1.0.0 (2026-02-14)
-- Initial release
-- Sound effects for all hooks
-- Streak tracking
-- Commentary injection
-- /jam-claude:jam toggle command
+See [CHANGELOG.md](CHANGELOG.md) for version history.

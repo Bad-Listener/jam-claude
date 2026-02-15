@@ -154,6 +154,23 @@ After feature development is complete, PROVE that it works before proceeding:
 
 This applies to all features: new hooks, installer changes, sound playback, streak tracking, configuration handling.
 
+## Versioning
+
+Single source of truth: `plugin.json` holds the version. Use the bump script or skill:
+
+```bash
+# Via skill (prompts for type + entry)
+/jam-claude:version-bump
+
+# Via script
+ruby scripts/version-bump.rb patch "Fixed X"
+ruby scripts/version-bump.rb minor "Added Y"
+ruby scripts/version-bump.rb major "Breaking change Z"
+ruby scripts/version-bump.rb patch "Test" --dry-run
+```
+
+The script updates `plugin.json` and `CHANGELOG.md`. `install.sh` reads the version dynamically from `plugin.json` — no manual sync needed.
+
 ## Documentation
 
 - After any code change, evaluate whether documentation needs updating (CLAUDE.md, README, inline comments, install scripts).
