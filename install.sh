@@ -179,6 +179,36 @@ setup_settings() {
   info "Plugin enabled in settings"
 }
 
+# Register PostToolUse hook in user settings
+# Claude Code ignores PostToolUse hooks from plugin hooks.json — only settings.json works
+setup_settings_hooks() {
+  step "Registering PostToolUse hook..."
+
+  ruby -rjson -e '
+    file = ARGV[0]
+    cmd  = ARGV[1]
+
+    data = File.exist?(file) ? JSON.parse(File.read(file)) : {}
+    data["hooks"] ||= {}
+    data["hooks"]["PostToolUse"] ||= []
+
+    # Skip if our hook is already registered
+    already = data["hooks"]["PostToolUse"].any? { |group|
+      (group["hooks"] || []).any? { |h| h["command"] == cmd }
+    }
+
+    unless already
+      data["hooks"]["PostToolUse"] << {
+        "hooks" => [{ "type" => "command", "command" => cmd }]
+      }
+      File.write(file, JSON.pretty_generate(data) + "\n")
+    end
+  ' "$CLAUDE_DIR/settings.json" \
+    "$MARKETPLACE_DIR/jam-claude-plugin/hooks/entrypoints/post_tool_use.rb"
+
+  info "PostToolUse hook registered in settings"
+}
+
 # Copy plugin files to cache (what Claude Code actually runs)
 setup_cache() {
   step "Setting up plugin cache..."
@@ -197,6 +227,7 @@ setup_cache() {
 
   # Ensure entrypoints are executable
   chmod +x "$CACHE_DIR/hooks/entrypoints/"*.rb
+  chmod +x "$MARKETPLACE_DIR/jam-claude-plugin/hooks/entrypoints/"*.rb
 
   info "Cache populated ($(find "$CACHE_DIR" -type f | wc -l | tr -d ' ') files)"
 }
@@ -227,6 +258,7 @@ main() {
   setup_install_registry
   setup_settings
   setup_cache
+  setup_settings_hooks
   setup_config
 
   # Clear stale update notification after fresh install
