@@ -237,8 +237,8 @@ main() {
   echo ""
   echo -e "  ${BOLD}Next steps:${RESET}"
   echo "  1. Restart Claude Code (exit and reopen)"
-  echo -e "  2. Type ${CYAN}/jam${RESET} to check status"
-  echo -e "  3. Use ${CYAN}/jam on${RESET} or ${CYAN}/jam off${RESET} to toggle"
+  echo -e "  2. Type ${CYAN}/jam-claude:jam${RESET} to check status"
+  echo -e "  3. Use ${CYAN}/jam-claude:jam on${RESET} or ${CYAN}/jam-claude:jam off${RESET} to toggle"
   echo ""
 }
 
