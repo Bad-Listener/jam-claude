@@ -244,13 +244,21 @@ Files are copied to both cache (`~/.claude/plugins/cache/jam-claude/jam-claude/<
 
 ## Testing
 
-Three test files in project root (run with `ruby <file>`):
+Custom lightweight test framework (`test/test_helper.rb`) with assertions, stubs, sandbox isolation, and a test runner. 252 tests across 22 files covering 100% of modules (15/15) and handlers (5/5). All tests use temp directories — zero risk to real `~/.config/claude/` files.
 
-| File | Coverage |
-|------|----------|
-| `test_error_detection.rb` | ErrorDetector categories, exit codes, content patterns, ErrorSoundMapper weights |
-| `test_hooks.rb` | Handler flow, PostToolUse → Stop coordination via ErrorState, streak logic |
-| `test_integration.rb` | End-to-end error flow, turnovers tracking, streak reset/restart |
+```bash
+ruby test/run_tests.rb              # all tests (252)
+ruby test/run_tests.rb unit         # pure logic tests (97)
+ruby test/run_tests.rb integration  # sandbox I/O tests (97)
+ruby test/run_tests.rb handler      # full handler flow tests (58)
+ruby test/run_tests.rb streak       # pattern match on filename
+```
+
+| Directory | Files | Coverage |
+|-----------|-------|----------|
+| `test/unit/` | 7 | StatsCalculator, ErrorDetector, ErrorSoundMapper, ContextualCommentary, NbaFacts, FactPresenter, FireColors |
+| `test/integration/` | 9 | ErrorState, ContextualSoundState, StreakTracker, SessionStats, JamConfig, SoundPlayer, BoxScore, AsciiBanner, UpdateChecker |
+| `test/handlers/` | 5 | PostToolUse, Stop, SessionStart, Notification, SessionEnd |
 
 ## Versioning
 
