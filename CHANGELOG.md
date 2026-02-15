@@ -8,6 +8,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 
 
+
+## [1.0.4] - 2026-02-15
+
+### Changed
+- Removed demo command from /jam skill
+
 ## [1.0.3] - 2026-02-15
 
 ### Changed
@@ -29,4 +35,4 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Sound effects for all hooks (session start, stop, notification, session end)
 - Streak tracking with progressive sound unlocks
 - Commentary injection via session start context
-- `/jam-claude:jam` toggle command (on/off/demo)
+- `/jam-claude:jam` toggle command (on/off)

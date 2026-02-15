@@ -76,7 +76,7 @@ The installer (`install.sh`) registers across three layers — all must be in sy
 ./uninstall.sh
 
 # Toggle mode via skill
-/jam-claude:jam on|off|demo
+/jam-claude:jam on|off
 ```
 
 ## Git Workflow
