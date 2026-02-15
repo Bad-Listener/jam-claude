@@ -10,6 +10,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 
 
+## [1.3.0] - 2026-02-15
+
+### Added
+- NBA Jam 1993 arcade halftime screen layout — two-panel design with portrait silhouette + vertical stats
+- StatsCalculator module — derives NBA-realistic stats (PTS, FG, 3PT, DNK, AST, STL, BLK, REB) from raw tool usage
+- Turn tracking (each Claude response = one turn) for field goal attempt calculation
+- Portrait mugshot using Unicode shade blocks (░▓█▄)
+
+### Changed
+- Box score stats now mathematically consistent: PTS = (FG - 3PT) × 2 + 3PT × 3
+- Rating tiers recalibrated on calculated PTS (40+ Hall of Fame, 30+ MVP, 20+ All-Star, 10+ Starter)
+- Inner width increased from 41 to 46 chars for two-panel layout
+- SessionStats fields renamed from basketball labels to raw tool names (points→total_tools, assists→edits, etc.)
+
 ## [1.2.0] - 2026-02-15
 
 ### Added

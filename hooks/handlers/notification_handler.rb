@@ -26,7 +26,7 @@ class JamClaudeNotificationHandler < ClaudeHooks::Notification
     type = notification_type || 'unknown'
     log "JAM Claude: Notification (#{type})"
 
-    SessionStats.increment_blocks if type == 'permission_prompt' && JamConfig.jam?
+    SessionStats.increment_permissions if type == 'permission_prompt' && JamConfig.jam?
 
     # Low mode: skip notification sounds entirely
     if JamConfig.low?
