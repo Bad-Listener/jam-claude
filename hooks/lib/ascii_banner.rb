@@ -4,20 +4,19 @@ require 'rbconfig'
 require 'json'
 require_relative 'nba_facts'
 require_relative 'fact_presenter'
+require_relative 'fire_colors'
 
 # AsciiBanner - Display NBA JAM logo and activation message
 
 module AsciiBanner
-  NBA_JAM_LOGO = <<~BANNER
-
-       ███╗   ██╗██████╗  █████╗          ██╗ █████╗ ███╗   ███╗
-       ████╗  ██║██╔══██╗██╔══██╗         ██║██╔══██╗████╗ ████║
-       ██╔██╗ ██║██████╔╝███████║         ██║███████║██╔████╔██║
-       ██║╚██╗██║██╔══██╗██╔══██║    ██   ██║██╔══██║██║╚██╔╝██║
-       ██║ ╚████║██████╔╝██║  ██║    ╚█████╔╝██║  ██║██║ ╚═╝ ██║
-       ╚═╝  ╚═══╝╚═════╝ ╚═╝  ╚═╝     ╚════╝ ╚═╝  ╚═╝╚═╝     ╚═╝
-
-  BANNER
+  NBA_JAM_LINES = [
+    '       ███╗   ██╗██████╗  █████╗          ██╗ █████╗ ███╗   ███╗',
+    '       ████╗  ██║██╔══██╗██╔══██╗         ██║██╔══██╗████╗ ████║',
+    '       ██╔██╗ ██║██████╔╝███████║         ██║███████║██╔████╔██║',
+    '       ██║╚██╗██║██╔══██╗██╔══██║    ██   ██║██╔══██║██║╚██╔╝██║',
+    '       ██║ ╚████║██████╔╝██║  ██║    ╚█████╔╝██║  ██║██║ ╚═╝ ██║',
+    '       ╚═╝  ╚═══╝╚═════╝ ╚═╝  ╚═╝     ╚════╝ ╚═╝  ╚═╝╚═╝     ╚═╝'
+  ].freeze
 
   class << self
     # Display the JAM Claude banner
@@ -25,10 +24,16 @@ module AsciiBanner
       # Write directly to terminal, bypassing stdout (JSON) and stderr (errors)
       tty_path = tty_device_path
       File.open(tty_path, 'w') do |tty|
-        tty.puts NBA_JAM_LOGO
-        tty.puts "         🏀 BOOMSHAKALAKA! JAM MODE ACTIVATED 🏀"
+        tty.puts
+        # Gradient-colored logo: each line gets a fire color from gold → deep red
+        NBA_JAM_LINES.each_with_index do |line, i|
+          color = FireColors.send(FireColors::LOGO_GRADIENT[i])
+          tty.puts "#{color}#{line}#{FireColors.reset}"
+        end
+        tty.puts
+        tty.puts "         #{FireColors.gold}#{FireColors.bold}🏀 BOOMSHAKALAKA! JAM MODE ACTIVATED 🏀#{FireColors.reset}"
         version = plugin_version
-        tty.puts "v#{version}".center(57) if version
+        tty.puts "#{FireColors.dim_orange}#{"v#{version}".center(64)}#{FireColors.reset}" if version
         tty.puts
         result = NbaFacts.random_with_category
         tty.puts FactPresenter.format(result)
@@ -38,7 +43,7 @@ module AsciiBanner
       # No terminal available (e.g., running in background or piped)
     end
 
-    # Display a yellow update notification below the banner
+    # Display an update notification below the banner
     def display_update_notice
       return unless defined?(UpdateChecker) && UpdateChecker.update_available?
 
@@ -47,7 +52,7 @@ module AsciiBanner
 
       tty_path = tty_device_path
       File.open(tty_path, 'w') do |tty|
-        tty.puts "  \033[93m!\033[0m #{message}"
+        tty.puts "  #{FireColors.red_orange}!#{FireColors.reset} #{message}"
         tty.puts
       end
     rescue Errno::ENODEV, Errno::ENOENT, Errno::ENXIO, Errno::EACCES

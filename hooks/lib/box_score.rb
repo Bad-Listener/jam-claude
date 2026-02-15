@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require 'rbconfig'
+require_relative 'fire_colors'
 
 # BoxScore - Display post-game basketball stats for the coding session
 #
@@ -9,23 +10,20 @@ require 'rbconfig'
 # stderr (not displayed during SessionEnd hooks).
 
 module BoxScore
-  # ANSI color codes
-  YELLOW = "\e[93m"
-  WHITE  = "\e[97m"
-  CYAN   = "\e[96m"
-  GREEN  = "\e[92m"
-  RED    = "\e[91m"
-  BOLD   = "\e[1m"
-  DIM    = "\e[2m"
-  RESET  = "\e[0m"
+  # Non-fire colors for rating tiers (keep distinctive)
+  GREEN = "\e[92m"
+  CYAN  = "\e[96m"
 
   RATING_TIERS = [
-    [51, 'HALL OF FAME',   RED],
-    [31, 'MVP CANDIDATE',  YELLOW],
-    [16, 'ALL-STAR',       GREEN],
-    [6,  'STARTER',        CYAN],
-    [0,  'BENCHWARMER',    DIM]
+    [51, 'HALL OF FAME',   :fire_red],
+    [31, 'MVP CANDIDATE',  :gold],
+    [16, 'ALL-STAR',       :green],
+    [6,  'STARTER',        :cyan],
+    [0,  'BENCHWARMER',    :dim]
   ].freeze
+
+  # Box width: 41 inner chars + 2 border chars = 45 total (matches original)
+  INNER_WIDTH = 41
 
   class << self
     def display(stats, peak_streak, was_on_fire)
@@ -45,48 +43,68 @@ module BoxScore
     def render(stats, peak_streak, was_on_fire)
       pts = stats['points']
       rating_label, rating_color = determine_rating(pts)
-      fire_indicator = was_on_fire ? "  #{RED}ON FIRE#{RESET}" : ''
+      fire_indicator = was_on_fire ? "  #{FireColors.fire_red}#{FireColors.bold}🔥 ON FIRE#{FireColors.reset}" : ''
+
+      b = FireColors.red_orange  # border color
+      r = FireColors.reset
+      h = FireColors.gold        # header color
+      a = FireColors.amber       # stat label color
+      w = "#{FireColors.warm_white}#{FireColors.bold}" # stat values
 
       lines = []
       lines << ''
-      lines << "#{YELLOW}  +-----------------------------------------+#{RESET}"
-      lines << "#{YELLOW}  |#{WHITE}#{BOLD}           POST-GAME BOX SCORE           #{RESET}#{YELLOW}|#{RESET}"
-      lines << "#{YELLOW}  +-----------------------------------------+#{RESET}"
-      lines << "#{YELLOW}  |#{RESET}                                         #{YELLOW}|#{RESET}"
-      lines << "#{YELLOW}  |#{RESET}   #{WHITE}PTS#{RESET}  #{pad(pts)}     #{WHITE}AST#{RESET}  #{pad(stats['assists'])}     #{WHITE}REB#{RESET}  #{pad(stats['rebounds'])}    #{YELLOW}|#{RESET}"
-      lines << "#{YELLOW}  |#{RESET}   #{WHITE}DNK#{RESET}  #{pad(stats['dunks'])}     #{WHITE}STL#{RESET}  #{pad(stats['steals'])}     #{WHITE}BLK#{RESET}  #{pad(stats['blocks'])}    #{YELLOW}|#{RESET}"
-      lines << "#{YELLOW}  |#{RESET}                                         #{YELLOW}|#{RESET}"
-      lines << "#{YELLOW}  |#{RESET}  #{WHITE}STREAK#{RESET}  #{pad(peak_streak)}#{fire_indicator}#{' ' * pad_fire(was_on_fire)}#{YELLOW}|#{RESET}"
-      lines << "#{YELLOW}  |#{RESET}                                         #{YELLOW}|#{RESET}"
-      lines << "#{YELLOW}  |#{RESET}  #{WHITE}RATING:#{RESET} #{rating_color}#{BOLD}#{rating_label}#{RESET}#{' ' * pad_rating(rating_label)}#{YELLOW}|#{RESET}"
-      lines << "#{YELLOW}  +-----------------------------------------+#{RESET}"
+      lines << "#{b}  ╔#{'═' * INNER_WIDTH}╗#{r}"
+      lines << "#{b}  ║#{r}#{h}#{FireColors.bold}#{'POST-GAME BOX SCORE'.center(INNER_WIDTH)}#{r}#{b}║#{r}"
+      lines << "#{b}  ╠#{'═' * INNER_WIDTH}╣#{r}"
+      lines << "#{b}  ║#{r}#{' ' * INNER_WIDTH}#{b}║#{r}"
+      lines << "#{b}  ║#{r}   #{a}PTS#{r}  #{w}#{pad(pts)}#{r}     #{a}AST#{r}  #{w}#{pad(stats['assists'])}#{r}     #{a}REB#{r}  #{w}#{pad(stats['rebounds'])}#{r}    #{b}║#{r}"
+      lines << "#{b}  ║#{r}   #{a}DNK#{r}  #{w}#{pad(stats['dunks'])}#{r}     #{a}STL#{r}  #{w}#{pad(stats['steals'])}#{r}     #{a}BLK#{r}  #{w}#{pad(stats['blocks'])}#{r}    #{b}║#{r}"
+      lines << "#{b}  ║#{r}#{' ' * INNER_WIDTH}#{b}║#{r}"
+      lines << streak_line(peak_streak, fire_indicator, b, r, a, w)
+      lines << "#{b}  ║#{r}#{' ' * INNER_WIDTH}#{b}║#{r}"
+      lines << rating_line(rating_label, rating_color, b, r)
+      lines << "#{b}  ╚#{'═' * INNER_WIDTH}╝#{r}"
       lines << ''
       lines.join("\n")
     end
 
+    def streak_line(peak_streak, fire_indicator, b, r, a, w)
+      # Visible chars without ANSI: "  STREAK  ###" = 13 terminal columns
+      # With fire: + "  🔥 ON FIRE" = 12 terminal columns (🔥 is 2-wide)
+      visible_len = 13
+      visible_len += 12 if fire_indicator != ''
+      padding = INNER_WIDTH - visible_len
+
+      "#{b}  ║#{r}  #{a}STREAK#{r}  #{w}#{pad(peak_streak)}#{r}#{fire_indicator}#{' ' * padding}#{b}║#{r}"
+    end
+
+    def rating_line(label, color_key, b, r)
+      # Map color keys to actual escape codes
+      color = case color_key
+              when :fire_red then "#{FireColors.fire_red}#{FireColors.bold}"
+              when :gold     then "#{FireColors.gold}#{FireColors.bold}"
+              when :green    then "#{GREEN}#{FireColors.bold}"
+              when :cyan     then "#{CYAN}#{FireColors.bold}"
+              when :dim      then FireColors.dim
+              else FireColors.warm_white
+              end
+
+      # "  RATING: " = 10 visible chars, then label
+      visible_len = 10 + label.length
+      padding = INNER_WIDTH - visible_len
+
+      "#{b}  ║#{r}  #{FireColors.amber}RATING:#{r} #{color}#{label}#{r}#{' ' * padding}#{b}║#{r}"
+    end
+
     def determine_rating(points)
-      RATING_TIERS.each do |threshold, label, color|
-        return [label, color] if points >= threshold
+      RATING_TIERS.each do |threshold, label, color_key|
+        return [label, color_key] if points >= threshold
       end
-      ['BENCHWARMER', DIM]
+      ['BENCHWARMER', :dim]
     end
 
     def pad(value)
       [value.to_i, 999].min.to_s.rjust(3)
-    end
-
-    # Calculate trailing spaces for the STREAK line to align the right border
-    # Inner content = "  STREAK  ###" = 13 visible chars, need 41 total
-    # With fire: adds "  ON FIRE" = 9 visible chars → 41 - 13 - 9 = 19
-    # Without fire: 41 - 13 = 28
-    def pad_fire(was_on_fire)
-      was_on_fire ? 19 : 28
-    end
-
-    # Calculate trailing spaces for the RATING line to align the right border
-    # "  RATING: LABEL" — total content area is 41 chars
-    def pad_rating(label)
-      41 - 10 - label.length
     end
 
     def windows?
