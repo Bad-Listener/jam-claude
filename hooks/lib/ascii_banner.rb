@@ -26,9 +26,9 @@ module AsciiBanner
       tty_path = tty_device_path
       File.open(tty_path, 'w') do |tty|
         tty.puts NBA_JAM_LOGO
-        tty.puts "   🏀 BOOMSHAKALAKA! JAM MODE ACTIVATED 🏀"
+        tty.puts "         🏀 BOOMSHAKALAKA! JAM MODE ACTIVATED 🏀"
         version = plugin_version
-        tty.puts "                    v#{version}" if version
+        tty.puts "v#{version}".center(57) if version
         tty.puts
         result = NbaFacts.random_with_category
         tty.puts FactPresenter.format(result)
@@ -47,7 +47,7 @@ module AsciiBanner
 
       tty_path = tty_device_path
       File.open(tty_path, 'w') do |tty|
-        tty.puts "   \033[93m!\033[0m #{message}"
+        tty.puts "  \033[93m!\033[0m #{message}"
         tty.puts
       end
     rescue Errno::ENODEV, Errno::ENOENT, Errno::ENXIO, Errno::EACCES

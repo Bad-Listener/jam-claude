@@ -14,8 +14,9 @@ module FactPresenter
 
   # Layout constants
   STRIPE = '━'  # Unicode U+2501
-  STRIPE_WIDTH = 62
-  CONTENT_WIDTH = 58  # Allows 2-char padding on each side
+  STRIPE_WIDTH = 57         # Matches NBA JAM logo width (<<~ strips indent)
+  CONTENT_INDENT = '  '    # 2-space breathing room inside stripes
+  CONTENT_WIDTH = 53       # 57 - (2 left + 2 right padding)
 
   # Human-readable category labels
   CATEGORY_LABELS = {
@@ -52,19 +53,19 @@ module FactPresenter
 
       # Build presentation
       lines = []
-      lines << "   #{YELLOW}#{STRIPE * STRIPE_WIDTH}#{RESET}"
-      lines << "   #{emoji}  #{CYAN}#{BOLD}#{label}#{RESET}"
+      lines << "#{YELLOW}#{STRIPE * STRIPE_WIDTH}#{RESET}"
+      lines << "#{CONTENT_INDENT}#{emoji}  #{CYAN}#{BOLD}#{label}#{RESET}"
       lines << ""
 
       # Wrap and format fact text
       wrapped_lines = wrap_fact(fact_text)
       wrapped_lines.each do |line|
-        lines << "   #{WHITE}#{bold_keywords(line)}#{RESET}"
+        lines << "#{CONTENT_INDENT}#{WHITE}#{bold_keywords(line)}#{RESET}"
       end
 
       lines << ""
-      lines << "   #{YELLOW}#{DIM}#{reaction}#{RESET}"
-      lines << "   #{YELLOW}#{STRIPE * STRIPE_WIDTH}#{RESET}"
+      lines << "#{CONTENT_INDENT}#{YELLOW}#{DIM}#{reaction}#{RESET}"
+      lines << "#{YELLOW}#{STRIPE * STRIPE_WIDTH}#{RESET}"
 
       lines.join("\n")
     end

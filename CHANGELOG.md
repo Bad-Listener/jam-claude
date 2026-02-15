@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 
 
+
+## [1.0.3] - 2026-02-15
+
+### Changed
+- Pixel-perfect ASCII art alignment across banner, box score, and fact card
+
 ## [1.0.2] - 2026-02-15
 
 ### Changed
