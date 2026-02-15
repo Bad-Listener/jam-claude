@@ -10,6 +10,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 
 
+
+## [1.4.0] - 2026-02-15
+
+### Changed
+- Added TDD framework with 252 tests covering 100% of modules and handlers
+
 ## [1.3.0] - 2026-02-15
 
 ### Added
