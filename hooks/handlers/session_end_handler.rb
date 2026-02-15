@@ -44,7 +44,7 @@ class JamClaudeSessionEndHandler < ClaudeHooks::SessionEnd
     return unless JamConfig.jam?
 
     stats = SessionStats.stats
-    return if stats['points'] <= 0
+    return if stats['turns'] <= 0
 
     BoxScore.display(stats, stats['peak_streak'], stats['was_on_fire'])
     SessionStats.reset

@@ -48,6 +48,7 @@ class JamClaudeStopHandler < ClaudeHooks::Stop
     # Check if error occurred in this turn - skip success sound if so
     if ErrorState.error_and_clear?
       log 'JAM Claude: Skipping success sound due to error in this turn'
+      SessionStats.increment_turns(error_occurred: true) if JamConfig.jam?
       allow_continue!
       suppress_output!
       return output_data
@@ -55,7 +56,10 @@ class JamClaudeStopHandler < ClaudeHooks::Stop
 
     # Increment streak (only if no error)
     current_streak = StreakTracker.increment
-    SessionStats.update_peak_streak(current_streak) if JamConfig.jam?
+    if JamConfig.jam?
+      SessionStats.update_peak_streak(current_streak)
+      SessionStats.increment_turns(error_occurred: false)
+    end
     log "JAM Claude: Current streak: #{current_streak}"
 
     # Skip generic success sound if contextual sound already played this turn

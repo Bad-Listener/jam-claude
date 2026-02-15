@@ -4,15 +4,17 @@ require 'json'
 require 'fileutils'
 require 'time'
 
-# SessionStats - Track coding session statistics as basketball stats
+# SessionStats - Track raw tool usage during a coding session
 #
 # State file: ~/.config/claude/jam-stats.json
-# Tracks: points, assists, rebounds, dunks, steals, blocks, turnovers, peak_streak, was_on_fire
+# Tracks: total_tools, edits, reads, writes, bashes, permissions, errors,
+#         turns, error_turns, peak_streak, was_on_fire
 #
 # Usage:
 #   SessionStats.record(tool_name)
-#   SessionStats.increment_blocks
-#   SessionStats.increment_turnovers
+#   SessionStats.increment_permissions
+#   SessionStats.increment_errors
+#   SessionStats.increment_turns(error_occurred:)
 #   SessionStats.update_peak_streak(streak)
 #   SessionStats.stats
 #   SessionStats.reset
@@ -22,19 +24,19 @@ class SessionStats
 
   # Map tool names to stat categories
   TOOL_CATEGORIES = {
-    'Edit' => :assists,
-    'Read' => :rebounds,
-    'Grep' => :rebounds,
-    'Glob' => :rebounds,
-    'Write' => :dunks,
-    'Bash' => :steals
+    'Edit' => :edits,
+    'Read' => :reads,
+    'Grep' => :reads,
+    'Glob' => :reads,
+    'Write' => :writes,
+    'Bash' => :bashes
   }.freeze
 
   class << self
-    # Record a tool use - increments points and appropriate stat category
+    # Record a tool use - increments total_tools and appropriate stat category
     def record(tool_name)
       state = load_state
-      state['points'] += 1
+      state['total_tools'] += 1
 
       # Increment category-specific stat
       category = TOOL_CATEGORIES[tool_name]
@@ -44,18 +46,27 @@ class SessionStats
       save_state(state)
     end
 
-    # Increment blocks (permission prompts)
-    def increment_blocks
+    # Increment permissions (permission prompts)
+    def increment_permissions
       state = load_state
-      state['blocks'] += 1
+      state['permissions'] += 1
       state['last_updated'] = Time.now.iso8601
       save_state(state)
     end
 
-    # Increment turnovers (errors/failures)
-    def increment_turnovers
+    # Increment errors (detected failures)
+    def increment_errors
       state = load_state
-      state['turnovers'] += 1
+      state['errors'] += 1
+      state['last_updated'] = Time.now.iso8601
+      save_state(state)
+    end
+
+    # Increment turns — each Claude response is a turn
+    def increment_turns(error_occurred:)
+      state = load_state
+      state['turns'] += 1
+      state['error_turns'] += 1 if error_occurred
       state['last_updated'] = Time.now.iso8601
       save_state(state)
     end
@@ -106,13 +117,15 @@ class SessionStats
     # Default state structure
     def default_state
       {
-        'points' => 0,
-        'assists' => 0,
-        'rebounds' => 0,
-        'dunks' => 0,
-        'steals' => 0,
-        'blocks' => 0,
-        'turnovers' => 0,
+        'total_tools' => 0,
+        'edits' => 0,
+        'reads' => 0,
+        'writes' => 0,
+        'bashes' => 0,
+        'permissions' => 0,
+        'errors' => 0,
+        'turns' => 0,
+        'error_turns' => 0,
         'peak_streak' => 0,
         'was_on_fire' => false,
         'last_updated' => Time.now.iso8601

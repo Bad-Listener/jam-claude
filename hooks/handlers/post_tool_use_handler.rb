@@ -69,6 +69,6 @@ class JamClaudePostToolUseHandler < ClaudeHooks::PostToolUse
     log "JAM Claude: Streak reset due to error"
 
     ErrorState.mark_error!
-    SessionStats.increment_turnovers
+    SessionStats.increment_errors
   end
 end
