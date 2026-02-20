@@ -179,6 +179,34 @@ class TestStopHandler < JamTest::TestCase
     assert_true result['suppressOutput']
   end
 
+  # ── Off mode — theme disabled ──────────────────────────────────────────
+  def test_off_mode_skips_sound
+    write_sandbox_file('sounds.conf', "SOUND_MODE=off\n")
+
+    handler = JamClaudeStopHandler.new({})
+    handler.call
+
+    assert_false @play_weighted_stub.called?, 'Off mode should skip success sound'
+  end
+
+  def test_off_mode_skips_streak_increment
+    write_sandbox_file('sounds.conf', "SOUND_MODE=off\n")
+
+    handler = JamClaudeStopHandler.new({})
+    handler.call
+
+    assert_equal 0, StreakTracker.current_streak
+  end
+
+  def test_off_mode_skips_stats
+    write_sandbox_file('sounds.conf', "SOUND_MODE=off\n")
+
+    handler = JamClaudeStopHandler.new({})
+    handler.call
+
+    assert_equal 0, SessionStats.stats['turns']
+  end
+
   # ── Peak streak tracking ───────────────────────────────────────────────
   def test_updates_peak_streak
     3.times do

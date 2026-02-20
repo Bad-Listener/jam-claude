@@ -145,7 +145,14 @@ Two settings read by `lib/jam_config.rb`:
 
 **Env override:** `CLAUDE_DISABLE_SOUNDS=1` takes precedence over config file.
 
-**Frequency modes:**
+**Sound modes:**
+
+| Mode | Behavior |
+|------|----------|
+| `off` | Entire theme disabled — no sounds, no banner, no commentary, no stats, no box score. Only the background update checker runs. |
+| `jam` | Theme enabled — behavior controlled by `SOUND_FREQUENCY` setting below |
+
+**Frequency modes** (only apply when `SOUND_MODE=jam`):
 
 | Mode | Description | Behavior |
 |------|-------------|----------|

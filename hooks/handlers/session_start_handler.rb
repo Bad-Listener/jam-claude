@@ -4,6 +4,7 @@ require_relative '../lib/sound_player'
 require_relative '../lib/ascii_banner'
 require_relative '../lib/session_stats'
 require_relative '../lib/update_checker'
+require_relative '../../lib/jam_config'
 
 # JAM Claude SessionStart Handler
 #
@@ -26,11 +27,18 @@ class JamClaudeSessionStartHandler < ClaudeHooks::SessionStart
     # Reset stats for new session
     SessionStats.reset
 
+    # Always run background update check (populates cache for when theme is re-enabled)
+    UpdateChecker.check_in_background!
+
+    unless JamConfig.jam?
+      log 'JAM Claude: Theme disabled — skipping banner and commentary'
+      allow_continue!
+      suppress_output!
+      return output_data
+    end
+
     # Display banner
     AsciiBanner.display
-
-    # Kick off background update check (forks child if >24h since last check)
-    UpdateChecker.check_in_background!
 
     # Show cached update notice from previous check (zero latency)
     AsciiBanner.display_update_notice

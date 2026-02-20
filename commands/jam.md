@@ -17,7 +17,7 @@ $ARGUMENTS
 | Argument | SOUND_MODE | SOUND_FREQUENCY | Description |
 |----------|-----------|-----------------|-------------|
 | `on` | jam | normal | Enable JAM mode (default frequency) |
-| `off` | off | (unchanged) | Disable all sounds |
+| `off` | off | (unchanged) | Disable entire JAM theme |
 | `frequent` | jam | frequent | All sounds + contextual commentary |
 | `normal` | jam | normal | Standard sound density |
 | `low` | jam | low | Milestone sounds only |
@@ -41,7 +41,7 @@ $ARGUMENTS
 
 3. Report status with NBA Jam style:
    - `on`: "BOOMSHAKALAKA! JAM mode activated!"
-   - `off`: "JAM mode disabled - back to normal"
+   - `off`: "JAM mode disabled — no sounds, no banner, no commentary. Back to normal."
    - `frequent`: "BOOMSHAKALAKA! JAM mode: FREQUENT — Tim Kitzrow is in the booth!"
    - `normal`: "BOOMSHAKALAKA! JAM mode: NORMAL"
    - `low`: "BOOMSHAKALAKA! JAM mode: LOW — milestones only"
