@@ -13,8 +13,11 @@ class TestSessionStartHandler < JamTest::TestCase
     super
     create_sandbox
 
+    sandbox_const(JamConfig, :CONFIG_PATH, 'sounds.conf')
     sandbox_const(SessionStats, :STATE_PATH, 'jam-stats.json')
     sandbox_const(UpdateChecker, :STATE_PATH, 'jam-update.json')
+
+    write_sandbox_file('sounds.conf', "SOUND_MODE=jam\nSOUND_FREQUENCY=normal\n")
 
     # Stub sound playback
     @play_weighted_stub = stub_method(SoundPlayer, :play_weighted) { true }
@@ -24,7 +27,7 @@ class TestSessionStartHandler < JamTest::TestCase
     @notice_stub = stub_method(AsciiBanner, :display_update_notice) { nil }
 
     # Stub update checker to avoid forking
-    stub_method(UpdateChecker, :check_in_background!) { nil }
+    @update_check_stub = stub_method(UpdateChecker, :check_in_background!) { nil }
   end
 
   def test_resets_stats
@@ -94,6 +97,67 @@ class TestSessionStartHandler < JamTest::TestCase
     handler.call
 
     assert @notice_stub.called?, 'Should check for update notice'
+  end
+
+  # ── Off mode — theme disabled ──────────────────────────────────────────
+
+  def test_off_mode_skips_banner
+    write_sandbox_file('sounds.conf', "SOUND_MODE=off\n")
+
+    handler = build_handler
+    handler.call
+
+    assert_false @display_stub.called?, 'Off mode should skip banner'
+  end
+
+  def test_off_mode_skips_sound
+    write_sandbox_file('sounds.conf', "SOUND_MODE=off\n")
+
+    handler = build_handler
+    handler.call
+
+    assert_false @play_weighted_stub.called?, 'Off mode should skip startup sound'
+  end
+
+  def test_off_mode_skips_commentary
+    write_sandbox_file('sounds.conf', "SOUND_MODE=off\n")
+
+    handler = build_handler
+    result = handler.call
+
+    hook_output = result['hookSpecificOutput']
+    assert_nil hook_output, 'Off mode should skip commentary injection'
+  end
+
+  def test_off_mode_skips_update_notice
+    write_sandbox_file('sounds.conf', "SOUND_MODE=off\n")
+
+    handler = build_handler
+    handler.call
+
+    assert_false @notice_stub.called?, 'Off mode should skip update notice display'
+  end
+
+  def test_off_mode_still_runs_update_check
+    write_sandbox_file('sounds.conf', "SOUND_MODE=off\n")
+
+    handler = build_handler
+    handler.call
+
+    assert @update_check_stub.called?, 'Off mode should still run background update check'
+  end
+
+  def test_off_mode_still_resets_stats
+    SessionStats.reset
+    SessionStats.record('Edit')
+    assert_equal 1, SessionStats.stats['total_tools']
+
+    write_sandbox_file('sounds.conf', "SOUND_MODE=off\n")
+
+    handler = build_handler
+    handler.call
+
+    assert_equal 0, SessionStats.stats['total_tools']
   end
 
   private

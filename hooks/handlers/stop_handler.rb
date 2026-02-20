@@ -45,6 +45,12 @@ class JamClaudeStopHandler < ClaudeHooks::Stop
   def call
     log 'JAM Claude: Response completed'
 
+    unless JamConfig.jam?
+      allow_continue!
+      suppress_output!
+      return output_data
+    end
+
     # Check if error occurred in this turn - skip success sound if so
     if ErrorState.error_and_clear?
       log 'JAM Claude: Skipping success sound due to error in this turn'

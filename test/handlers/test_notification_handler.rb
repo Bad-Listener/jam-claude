@@ -93,9 +93,16 @@ class TestNotificationHandler < JamTest::TestCase
     handler = build_handler('permission_prompt')
     handler.call
 
-    # Handler delegates sound disabling to SoundPlayer internally,
-    # but stat tracking is gated on JamConfig.jam?
     assert_equal 0, SessionStats.stats['permissions']
+  end
+
+  def test_off_mode_skips_sound
+    write_sandbox_file('sounds.conf', "SOUND_MODE=off\n")
+
+    handler = build_handler('permission_prompt')
+    handler.call
+
+    assert_false @play_stub.called?, 'Off mode should skip notification sound'
   end
 
   private

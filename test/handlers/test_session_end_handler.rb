@@ -92,6 +92,15 @@ class TestSessionEndHandler < JamTest::TestCase
     assert_false @box_score_stub.called?
   end
 
+  def test_off_mode_skips_sound
+    write_sandbox_file('sounds.conf', "SOUND_MODE=off\n")
+
+    handler = build_handler('exit')
+    handler.call
+
+    assert_false @play_stub.called?, 'Off mode should skip game-over sound'
+  end
+
   def test_allows_continue
     result = build_handler('exit').call
     assert_true result['continue']

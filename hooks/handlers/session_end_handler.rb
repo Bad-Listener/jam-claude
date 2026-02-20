@@ -25,6 +25,12 @@ class JamClaudeSessionEndHandler < ClaudeHooks::SessionEnd
     end_reason = reason || 'unknown'
     log "JAM Claude: Session ending (#{end_reason})"
 
+    unless JamConfig.jam?
+      allow_continue!
+      suppress_output!
+      return output_data
+    end
+
     sound = END_SOUNDS[end_reason] || DEFAULT_SOUND
     success = SoundPlayer.play(sound, self)
 
